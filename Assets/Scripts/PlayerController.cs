@@ -23,10 +23,10 @@ public class PlayerController : MonoBehaviour {
 		grounded = lastCast = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
 		Debug.Log(grounded);
 
-		if(Input.GetButtonDown("Jump") && grounded){
+		if((Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) && grounded){
 			Jump = true;
 		}
-		if(Input.GetButton("Jump")) {
+		if(Input.GetButton("Jump") || Input.GetMouseButton(0)) {
 			Floating = true;
 		} else {
 			Floating = false;
