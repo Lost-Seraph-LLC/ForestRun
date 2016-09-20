@@ -1,27 +1,29 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Collider2D))]
 public class PlayerController : MonoBehaviour {
 	public float JumpForce = 250f;
-	public bool Jump = false;
-	public float floatingFactor = 0.5f;
-	private float originalFactor;
-	public bool Floating = false;
-	public Transform groundCheck;
-	public float maxHeight = 2f;
+    public float floatingFactor = 0.4f;
+
+    private float originalFactor;
 	private Rigidbody2D body;
-	private RaycastHit2D lastCast;
-	private bool grounded;
+	private Collider2D bodyCollider;
+
+    private bool Jump = false;
+    private bool Floating = false;
+    private bool grounded = false;
+    private bool hurt = false;
+
 	// Use this for initialization
 	void Awake () {
 		body = this.GetComponent<Rigidbody2D>();
+		bodyCollider = this.GetComponent<Collider2D>();
 		originalFactor = body.gravityScale;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		grounded = lastCast = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));
-		Debug.Log(grounded);
 
 		if((Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) && grounded){
 			Jump = true;
@@ -31,13 +33,13 @@ public class PlayerController : MonoBehaviour {
 		} else {
 			Floating = false;
 		}
-
-		var pos = this.transform.position;
-		this.transform.position.Set(pos.x, Mathf.Clamp(pos.y, lastCast.point.y, lastCast.point.y + this.maxHeight), pos.z);
 	}
 
 	// all physics code done in the fixed Update
 	void FixedUpdate() {
+		grounded = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Ground"));
+		hurt = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Enemy"));
+		
 		if(Jump) {
 			body.AddForce(new Vector2(0f, JumpForce));
 			Jump = false;
@@ -50,5 +52,10 @@ public class PlayerController : MonoBehaviour {
 			this.body.gravityScale = this.originalFactor;
 		}
 
-	}
+		if(hurt)
+        {
+            Debug.Log(hurt);
+        }
+
+    }
 }
