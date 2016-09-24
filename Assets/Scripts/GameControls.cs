@@ -2,21 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(AudioSource))]
 public class GameControls : MonoBehaviour {
 
     public List<AudioClip> audioSources;
-    private int clipIndex = 0;
     public EnemySpawner spawner;
     public EnemySpawner collectables;
     public PlayerController player;
     public Text timerText;
     public Text TitleText;
     public Text GameOver;
-    private bool gameStarted;
+    public Text results;
+    public Text tapRestart;
+    public float restartDelay = 10f;
 
+    private bool gameStarted;
+    private int clipIndex = 0;
     private AudioSource source;
+    private float restartTimer = 0;
+
 	// Use this for initialization
 	void Start () {
         this.source = this.GetComponent<AudioSource>();
@@ -31,7 +37,10 @@ public class GameControls : MonoBehaviour {
     private void SetGameOver(bool status) {
         GameOver.gameObject.SetActive(status);
     }
-	
+	private void SetResults() {
+        results.text = "Score: " + (player.GetTimeElapsed() * 100).ToString("0");
+
+    }
 	// Update is called once per frame
 	void Update () {
 	    if(!source.isPlaying)
@@ -55,7 +64,23 @@ public class GameControls : MonoBehaviour {
             timerText.text = player.GetTimeLeft().ToString("000");
         }
 
+        if(restartTimer > 0 && Time.time >= restartTimer) {
+            
+            tapRestart.gameObject.SetActive(true);
+
+            if(Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) {
+                gameStarted = true;
+                SceneManager.LoadScene(0);
+            }
+        }
+
+
         if(gameStarted && player.GetTimeLeft() == 0) {
+            if(restartTimer == 0) {
+                restartTimer = Time.time + restartDelay;
+                SetResults();
+            }
+
             SetGameOver(true);
 
             spawner.Disable();

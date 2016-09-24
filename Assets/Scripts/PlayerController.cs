@@ -71,52 +71,55 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Floating = Input.GetButton("Jump") || Input.GetMouseButton(0);
-		
-		if(Floating && grounded){
+		grounded = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Ground"));
+		hurt = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Enemy")) && CanCollideSomething();
+		collect = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Collectable")) && CanCollectSomething();
+
+		Floating = (Input.GetButton("Jump") || Input.GetMouseButton(0));
+
+		if(Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(0) && grounded) {
 			Jump = true;
-			anim.SetBool("Jump", true);
 		}
-		else if(grounded) {
-			anim.SetBool("Jump", false);
-		}
+			
+		anim.SetBool("Jump", Floating && !grounded);
 
 		if(isPlaying && GetTimeLeft() == 0) {
 			anim.SetBool("Dead", true);
 		}
 		else {
 			anim.SetBool("Dead", false);
-		}
-	}
-
-	// all physics code done in the fixed Update
-	void FixedUpdate() {
-		grounded = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Ground"));
-		hurt = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Enemy")) && CanCollideSomething();
-		collect = Physics2D.IsTouchingLayers(bodyCollider , 1 << LayerMask.NameToLayer("Collectable")) && CanCollectSomething();
-
-		if(Jump) {
-			body.AddForce(new Vector2(0f, JumpForce));
-			Jump = false;
-		}
-
-		if(Floating) {
-			this.body.gravityScale = this.originalFactor * this.floatingFactor;
-		}
-		else {
-			this.body.gravityScale = this.originalFactor;
-		}
-
+		}		
+		
 		if(hurt)
         {
+			Debug.Log("Damaged");
 			TimeTracker -= HurtTimeReduction;
 			SetNoCollide();
         }
 
 		if(collect) 
 		{
+			Debug.Log("Collected");
 			TimeTracker += CollectTimeIncrease;
 			SetNoCollectTime();
 		}
+	}
+
+	// all physics code done in the fixed Update
+	void FixedUpdate() {
+
+		if(Jump) {
+			body.AddForce(new Vector2(0f, JumpForce));
+			Jump = false;
+		}
+
+		if(Floating && !Jump) {
+			this.body.gravityScale = this.originalFactor * this.floatingFactor;
+		}
+		else {
+			this.body.gravityScale = this.originalFactor;
+		}
+
+
     }
 }
