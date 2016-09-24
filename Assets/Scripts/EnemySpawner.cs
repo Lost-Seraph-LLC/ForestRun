@@ -6,10 +6,13 @@ public class EnemySpawner : MonoBehaviour {
     public List<EnemyBehavior>Enemies;
     public Collider2D FlyZone;
     public Collider2D GroundZone;
+    public Transform collection;
         
-    public float delay = 1f;
+    public float delayLow = 10f;
+    public float delayHigh = 20f;
     private float timer;
     private bool spawn = true;
+    
 	// Use this for initialization
 	void Start () {
         ResetTimer();
@@ -17,7 +20,7 @@ public class EnemySpawner : MonoBehaviour {
 
     private void ResetTimer()
     {
-        timer = Time.time + delay;
+        timer = Time.time + Random.Range(delayLow, delayHigh);
     }
 
     public void Enable()
@@ -29,6 +32,13 @@ public class EnemySpawner : MonoBehaviour {
     public void Disable()
     {
         spawn = false;
+        List<GameObject> children = new List<GameObject>();
+        
+        foreach(Transform c in collection) {
+            children.Add(c.gameObject);
+        }
+
+        children.ForEach(c => Destroy(c));
     }
 
 	// Update is called once per frame
@@ -66,6 +76,8 @@ public class EnemySpawner : MonoBehaviour {
 
             enemy.transform.position = new Vector3(spawnBounds.center.x + iuc.x * spawnBounds.extents.x,
                 spawnBounds.center.y + iuc.y * spawnBounds.extents.y, 0.21f);
+
+                enemy.transform.SetParent(this.collection.transform);
             ResetTimer();
         }
     }
