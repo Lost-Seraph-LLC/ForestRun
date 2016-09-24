@@ -7,6 +7,8 @@ public class SceneScroller : MonoBehaviour {
     public List<Material> interchangableMaterials;
     private MeshRenderer textureRenderer;
     private bool rotated = true; 
+    private int previousIndex = 0;
+
     void Start ()
     {
         textureRenderer = this.GetComponent<MeshRenderer>();
@@ -21,15 +23,26 @@ public class SceneScroller : MonoBehaviour {
         Vector2 offset = new Vector2(x, 0);
 
         // Pattern has repeated...
-        if(x < 0.01 && interchangableMaterials.Count > 0 && !rotated)
+        if(interchangableMaterials.Count > 0 && x < 0.01 && !rotated)
         {
             int i = Random.Range(0, interchangableMaterials.Count);
+
+            while(previousIndex == i) {
+                i = Random.Range(0, interchangableMaterials.Count);
+            }
+
+            previousIndex = i;
+
             textureRenderer.sharedMaterial = interchangableMaterials[i];
             rotated = true;
         }
 
-        rotated = rotated && x > 0.01;
+        rotated = rotated && x < 0.1;
 
         textureRenderer.sharedMaterial.SetTextureOffset("_MainTex", offset);
+    }
+
+    void OnApplicationQuit() {
+        textureRenderer.sharedMaterial.SetTextureOffset("_MainTex", new Vector2());
     }
 }

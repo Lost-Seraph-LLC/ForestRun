@@ -11,7 +11,7 @@ public class GameControls : MonoBehaviour {
     public EnemySpawner spawner;
     public EnemySpawner collectables;
     public PlayerController player;
-    public Text timerText;
+    public Text counter;
     public Text TitleText;
     public Text GameOver;
     public Text results;
@@ -37,6 +37,9 @@ public class GameControls : MonoBehaviour {
     private void SetGameOver(bool status) {
         GameOver.gameObject.SetActive(status);
     }
+    private void SetCounter(bool status) {
+        counter.gameObject.SetActive(status);
+    }
 	private void SetResults() {
         results.text = "Score: " + (player.GetTimeElapsed() * 100).ToString("0");
 
@@ -52,6 +55,7 @@ public class GameControls : MonoBehaviour {
 
         if((Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) && !gameStarted) {
             SetTitle(false);
+            SetCounter(true);
             spawner.Enable();
             collectables.Enable();
             player.SetTimer();
@@ -61,7 +65,7 @@ public class GameControls : MonoBehaviour {
 
     void OnGUI() {
         if(gameStarted) {
-            timerText.text = player.GetTimeLeft().ToString("000");
+            counter.text = player.GetTimeLeft().ToString("0");
         }
 
         if(restartTimer > 0 && Time.time >= restartTimer) {
@@ -82,6 +86,7 @@ public class GameControls : MonoBehaviour {
             }
 
             SetGameOver(true);
+            SetCounter(false);
 
             spawner.Disable();
             collectables.Disable();
