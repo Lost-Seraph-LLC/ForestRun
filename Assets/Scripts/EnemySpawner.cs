@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class EnemySpawner : MonoBehaviour {
@@ -9,7 +8,10 @@ public class EnemySpawner : MonoBehaviour {
     public Transform collection;
     
     public float delayLow = 10f;
+    public float delayLowCap = 0;
     public float delayHigh = 20f;
+    public float delayHighCap = 0;
+    public float decrementInterval = 50f;
 
     public float difficultyShift = 1;
     private float timer;
@@ -35,8 +37,8 @@ public class EnemySpawner : MonoBehaviour {
         delayLow -= difficultyShift;
         delayHigh -= difficultyShift;
 
-        delayLow = delayLow < 0 ? 0 : delayLow;
-        delayHigh = delayHigh < 0 ? 0 : delayHigh;
+        delayLow = delayLow < delayLowCap ? delayLowCap : delayLow;
+        delayHigh = delayHigh < delayHighCap ? delayHighCap : delayHigh;
     }
 
     public void Disable()

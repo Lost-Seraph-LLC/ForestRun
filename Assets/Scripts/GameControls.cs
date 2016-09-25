@@ -69,7 +69,7 @@ public class GameControls : MonoBehaviour {
         }
         
         if(player.IsPlaying()) {
-            float looper = player.GetTimeElapsed() % 50;
+            float looper = player.GetTimeElapsed() % spawner.decrementInterval;
 
             if(looper < 1 && !hasIncreased) {
                 spawner.IncreaseDifficulty();

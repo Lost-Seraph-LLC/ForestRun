@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Animator))]
