@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -22,22 +21,23 @@ public class GameControls : MonoBehaviour {
     private int clipIndex = 0;
     private AudioSource source;
     private float restartTimer = 0;
+    private bool hasIncreased = true;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         this.source = this.GetComponent<AudioSource>();
         spawner.Disable();
         collectables.Disable();
 	}
 
-    private void SetTitle(bool status) {
+    private void ToggleTitle(bool status) {
         TitleText.gameObject.SetActive(status);
     }
 
-    private void SetGameOver(bool status) {
+    private void ToggleGameOver(bool status) {
         GameOver.gameObject.SetActive(status);
     }
-    private void SetCounter(bool status) {
+    private void ToggleCounter(bool status) {
         counter.gameObject.SetActive(status);
     }
 	private void SetResults() {
@@ -54,18 +54,31 @@ public class GameControls : MonoBehaviour {
         }
 
         if((Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) && !gameStarted) {
-            SetTitle(false);
-            SetCounter(true);
+            ToggleTitle(false);
+            ToggleCounter(true);
             spawner.Enable();
             collectables.Enable();
             player.SetTimer();
             gameStarted = true;
         }
-	}
+        
+        if(player.IsPlaying()) {
+            float looper = player.GetTimeElapsed() % 30;
+
+            if(looper < 1 && !hasIncreased) {
+                spawner.IncreaseDifficulty();
+                hasIncreased = true;
+            }
+
+            if(looper > 1) {
+                hasIncreased = false;
+            }
+        }
+    }
 
     void OnGUI() {
         if(gameStarted) {
-            counter.text = player.GetTimeLeft().ToString("0");
+            counter.text = "til Death " + player.GetTimeLeft().ToString("0");
         }
 
         if(restartTimer > 0 && Time.time >= restartTimer) {
@@ -85,8 +98,8 @@ public class GameControls : MonoBehaviour {
                 SetResults();
             }
 
-            SetGameOver(true);
-            SetCounter(false);
+            ToggleGameOver(true);
+            ToggleCounter(false);
 
             spawner.Disable();
             collectables.Disable();

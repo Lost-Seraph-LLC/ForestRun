@@ -7,9 +7,11 @@ public class EnemySpawner : MonoBehaviour {
     public Collider2D FlyZone;
     public Collider2D GroundZone;
     public Transform collection;
-        
+    
     public float delayLow = 10f;
     public float delayHigh = 20f;
+
+    public float difficultyShift = 1;
     private float timer;
     private bool spawn = true;
     
@@ -27,6 +29,14 @@ public class EnemySpawner : MonoBehaviour {
     {
         spawn = true;
         ResetTimer();
+    }
+    
+    public void IncreaseDifficulty() {
+        delayLow -= difficultyShift;
+        delayHigh -= difficultyShift;
+
+        delayLow = delayLow < 0 ? 0 : delayLow;
+        delayHigh = delayHigh < 0 ? 0 : delayHigh;
     }
 
     public void Disable()

@@ -45,6 +45,10 @@ public class PlayerController : MonoBehaviour {
 		return NoCollectTime <= Time.time;
 	}
 
+	public bool IsPlaying() {
+        return isPlaying;
+    }
+
 	public void SetTimer() {
 		isPlaying = true;
 		TimeTracker = Time.time + SecondsLeft;
@@ -66,7 +70,7 @@ public class PlayerController : MonoBehaviour {
 		bodyCollider = this.GetComponent<Collider2D>();
 		originalFactor = body.gravityScale;
 		anim = this.GetComponent<Animator>();
-		TimeTracker = Time.time;
+		TimeTracker = Time.time - 1;
 	}
 	
 	// Update is called once per frame
@@ -81,7 +85,7 @@ public class PlayerController : MonoBehaviour {
 			Jump = true;
 		}
 			
-		anim.SetBool("Jump", Floating && !grounded);
+		anim.SetBool("Jump", !grounded);
 
 		if(isPlaying && GetTimeLeft() == 0) {
 			anim.SetBool("Dead", true);
