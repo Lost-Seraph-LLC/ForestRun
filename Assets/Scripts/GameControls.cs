@@ -15,6 +15,7 @@ public class GameControls : MonoBehaviour {
     public Text GameOver;
     public Text results;
     public Text tapRestart;
+    public Text Score;
     public float restartDelay = 10f;
 
     private bool gameStarted;
@@ -26,6 +27,7 @@ public class GameControls : MonoBehaviour {
     // Use this for initialization
     void Start () {
         this.source = this.GetComponent<AudioSource>();
+        this.source.mute = true;
         spawner.Disable();
         collectables.Disable();
 	}
@@ -39,14 +41,18 @@ public class GameControls : MonoBehaviour {
     }
     private void ToggleCounter(bool status) {
         counter.gameObject.SetActive(status);
+        Score.gameObject.SetActive(status);
     }
 	private void SetResults() {
         results.text = "Score: " + (player.GetTimeElapsed() * 100).ToString("0");
-
+    }
+	private void SetScore() {
+        Score.text = "Current Score: " + (player.GetTimeElapsed() * 100).ToString("0");
     }
 	// Update is called once per frame
 	void Update () {
-	    if(!source.isPlaying)
+        SetScore();
+        if(!source.isPlaying)
         {
             source.clip = audioSources[clipIndex];
             clipIndex = (clipIndex + 1) % audioSources.Count;
@@ -63,7 +69,7 @@ public class GameControls : MonoBehaviour {
         }
         
         if(player.IsPlaying()) {
-            float looper = player.GetTimeElapsed() % 30;
+            float looper = player.GetTimeElapsed() % 50;
 
             if(looper < 1 && !hasIncreased) {
                 spawner.IncreaseDifficulty();
@@ -78,7 +84,7 @@ public class GameControls : MonoBehaviour {
 
     void OnGUI() {
         if(gameStarted) {
-            counter.text = "til Death " + player.GetTimeLeft().ToString("0");
+            counter.text = player.GetTimeLeft().ToString("0") + " til Death";
         }
 
         if(restartTimer > 0 && Time.time >= restartTimer) {
