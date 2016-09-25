@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -11,13 +13,15 @@ public class PlayerController : MonoBehaviour {
 	public float NoCollideDelay = 2f;
 	public float HurtTimeReduction = 10f;
 	public float CollectTimeIncrease = 20f;
+    public Text TimeLeftCounter;
 
     private float originalFactor;
 	private Rigidbody2D body;
 	private Collider2D bodyCollider;
 	private Animator anim;
+    private Color basicColor;
 
-	private float TotalTime = 0;
+    private float TotalTime = 0;
 	private float TimeTracker = 0;
 
 	private float NoCollideTime = 0;
@@ -64,6 +68,17 @@ public class PlayerController : MonoBehaviour {
 		return Time.time - TotalTime;
 	}
 
+	IEnumerator FlashGreen() {
+        TimeLeftCounter.color = Color.green;
+        yield return new WaitForSeconds(1);
+        TimeLeftCounter.color = basicColor;
+    }
+	IEnumerator FlashRed() {
+        TimeLeftCounter.color = Color.red;
+        yield return new WaitForSeconds(1);
+        TimeLeftCounter.color = basicColor;
+    }
+
 	// Use this for initialization
 	void Awake () {
 		body = this.GetComponent<Rigidbody2D>();
@@ -71,7 +86,8 @@ public class PlayerController : MonoBehaviour {
 		originalFactor = body.gravityScale;
 		anim = this.GetComponent<Animator>();
 		TimeTracker = Time.time - 1;
-	}
+        basicColor = TimeLeftCounter.color;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -98,13 +114,17 @@ public class PlayerController : MonoBehaviour {
         {
 			Debug.Log("Damaged");
 			TimeTracker -= HurtTimeReduction;
-			SetNoCollide();
+            StopAllCoroutines();
+            StartCoroutine(FlashRed());
+            SetNoCollide();
         }
 
 		if(collect) 
 		{
 			Debug.Log("Collected");
 			TimeTracker += CollectTimeIncrease;
+            StopAllCoroutines();
+            StartCoroutine(FlashGreen());
 			SetNoCollectTime();
 		}
 	}

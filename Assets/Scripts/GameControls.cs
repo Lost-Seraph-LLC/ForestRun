@@ -27,7 +27,6 @@ public class GameControls : MonoBehaviour {
     // Use this for initialization
     void Start () {
         this.source = this.GetComponent<AudioSource>();
-        this.source.mute = true;
         spawner.Disable();
         collectables.Disable();
 	}
