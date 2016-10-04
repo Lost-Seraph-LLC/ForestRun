@@ -112,7 +112,6 @@ public class PlayerController : MonoBehaviour {
 		
 		if(hurt)
         {
-			Debug.Log("Damaged");
 			TimeTracker -= HurtTimeReduction;
             StopAllCoroutines();
             StartCoroutine(FlashRed());
@@ -121,7 +120,6 @@ public class PlayerController : MonoBehaviour {
 
 		if(collect) 
 		{
-			Debug.Log("Collected");
 			TimeTracker += CollectTimeIncrease;
             StopAllCoroutines();
             StartCoroutine(FlashGreen());

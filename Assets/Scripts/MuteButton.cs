@@ -10,19 +10,28 @@ public class MuteButton : MonoBehaviour {
 	private Image myImage;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
+        int muted = 0;
         this.myImage = this.GetComponent<Image>();
+        
+        Debug.Log("Muted: " + muted);
+        if(PlayerPrefs.HasKey("Muted")) {
+            muted = PlayerPrefs.GetInt("Muted", 0);
+            SetMute(muted > 0 ? true : false);
+        }
     }
 	
 	public void ToggleMute() {
 		if(audioSource != null) {
-            audioSource.mute = !audioSource.mute;
-			this.myImage.sprite = audioSource.mute ? OffImage : OnImage;
+            SetMute(!audioSource.mute);
         }
 	}
 
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public void SetMute(bool isMuted) {
+        audioSource.mute = isMuted;
+        this.myImage.sprite = isMuted ? OffImage : OnImage;
+        int muted = isMuted ? 1 : 0;
+        PlayerPrefs.SetInt("Muted", muted);
+        PlayerPrefs.Save();
+    }
 }

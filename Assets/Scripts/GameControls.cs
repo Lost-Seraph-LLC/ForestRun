@@ -16,6 +16,7 @@ public class GameControls : MonoBehaviour {
     public Text results;
     public Text tapRestart;
     public Text Score;
+    public Text TopScore;
     public float restartDelay = 10f;
 
     private bool gameStarted;
@@ -29,7 +30,8 @@ public class GameControls : MonoBehaviour {
         this.source = this.GetComponent<AudioSource>();
         spawner.Disable();
         collectables.Disable();
-	}
+        setTopScore();
+    }
 
     private void ToggleTitle(bool status) {
         TitleText.gameObject.SetActive(status);
@@ -43,10 +45,28 @@ public class GameControls : MonoBehaviour {
         Score.gameObject.SetActive(status);
     }
 	private void SetResults() {
-        results.text = "Score: " + (player.GetTimeElapsed() * 100).ToString("0");
+        float currentScore = (player.GetTimeElapsed() * 100);
+        results.text = "Score: " + currentScore.ToString("000000");
+
+        float highscore = 0;
+        if(PlayerPrefs.HasKey("Highscore")){
+            highscore = PlayerPrefs.GetFloat("Highscore");
+        }
+
+        PlayerPrefs.SetFloat("Highscore", (currentScore > highscore ? currentScore : highscore));
     }
+
+    private void setTopScore() {
+        float highscore = 0;
+        if(PlayerPrefs.HasKey("Highscore")){
+            highscore = PlayerPrefs.GetFloat("Highscore");
+        }
+
+        TopScore.text = "Current Highscore: " + highscore.ToString("000000");
+    }
+
 	private void SetScore() {
-        Score.text = "Current Score: " + (player.GetTimeElapsed() * 100).ToString("0");
+        Score.text = "Current Score: " + (player.GetTimeElapsed() * 100).ToString("000000");
     }
 	// Update is called once per frame
 	void Update () {
