@@ -10,6 +10,7 @@ public class GameControls : MonoBehaviour {
     public EnemySpawner spawner;
     public EnemySpawner collectables;
     public PlayerController player;
+    public GameObject InGame;
     public Text counter;
     public Text TitleText;
     public Text GameOver;
@@ -31,6 +32,10 @@ public class GameControls : MonoBehaviour {
         spawner.Disable();
         collectables.Disable();
         setTopScore();
+        
+        ToggleTitle(true);
+        ToggleInGame(false);
+        ToggleGameOver(false);
     }
 
     private void ToggleTitle(bool status) {
@@ -40,9 +45,8 @@ public class GameControls : MonoBehaviour {
     private void ToggleGameOver(bool status) {
         GameOver.gameObject.SetActive(status);
     }
-    private void ToggleCounter(bool status) {
-        counter.gameObject.SetActive(status);
-        Score.gameObject.SetActive(status);
+    private void ToggleInGame(bool status) {
+        InGame.SetActive(status);
     }
 	private void SetResults() {
         float currentScore = (player.GetTimeElapsed() * 100);
@@ -80,7 +84,8 @@ public class GameControls : MonoBehaviour {
 
         if((Input.GetButtonDown("Jump") ||  Input.GetMouseButtonDown(0)) && !gameStarted) {
             ToggleTitle(false);
-            ToggleCounter(true);
+            ToggleInGame(true);
+            ToggleGameOver(false);
             spawner.Enable();
             collectables.Enable();
             player.SetTimer();
@@ -124,7 +129,7 @@ public class GameControls : MonoBehaviour {
             }
 
             ToggleGameOver(true);
-            ToggleCounter(false);
+            ToggleInGame(false);
 
             spawner.Disable();
             collectables.Disable();
